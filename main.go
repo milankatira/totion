@@ -30,6 +30,11 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			fmt.Println("user clicked", msg.String())
 			return m, tea.Quit
 
+		case "ctrl+n":
+			fmt.Println("user clicked", msg.String())
+
+
+
 			// // The "up" and "k" keys move the cursor up
 			// case "up", "k":
 			// 	if m.cursor > 0 {
