@@ -9,6 +9,7 @@ import (
 	"charm.land/lipgloss/v2"
 )
 
+
 type model struct {
 	newFileInput           textinput.Model
 	createFileInputVisible bool
@@ -73,6 +74,13 @@ func initializedModel() model {
 	ti.Focus()
 	ti.CharLimit = 156
 	ti.SetWidth(40)
+
+	// Configure cursor style
+	s := ti.Styles()
+	s.Cursor.Color = lipgloss.Color("205")
+	s.Cursor.Blink = true
+	ti.SetStyles(s)
+
 	return model{
 		newFileInput:           ti,
 		createFileInputVisible: false,
