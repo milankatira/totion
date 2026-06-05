@@ -4,12 +4,14 @@ import (
 	"fmt"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 type model struct {
-	msg string
+	newFileInput           textinput.Model
+	createFileInputVisible bool
 }
 
 func (m model) Init() tea.Cmd {
@@ -17,54 +19,34 @@ func (m model) Init() tea.Cmd {
 }
 
 func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+
+	var cmd tea.Cmd
 	switch msg := msg.(type) {
 
 	// Is it a key press?
 	case tea.KeyMsg:
-
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
 
 		// These keys should exit the program.
 		case "ctrl+c", "q":
-			fmt.Println("user clicked", msg.String())
 			return m, tea.Quit
 
 		case "ctrl+n":
-			fmt.Println("user clicked", msg.String())
-
-
-
-			// // The "up" and "k" keys move the cursor up
-			// case "up", "k":
-			// 	if m.cursor > 0 {
-			// 		m.cursor--
-			// 	}
-
-			// // The "down" and "j" keys move the cursor down
-			// case "down", "j":
-			// 	if m.cursor < len(m.choices)-1 {
-			// 		m.cursor++
-			// 	}
-
-			// // The enter key and the space bar toggle the selected state for the
-			// // item that the cursor is pointing at.
-			// case "enter", "space":
-			// 	_, ok := m.selected[m.cursor]
-			// 	if ok {
-			// 		delete(m.selected, m.cursor)
-			// 	} else {
-			// 		m.selected[m.cursor] = struct{}{}
-			// 	}
+			m.createFileInputVisible = true
+			m.newFileInput.Focus()
+			return m, nil
 		}
 	}
 
+	if m.createFileInputVisible {
+		m.newFileInput, cmd = m.newFileInput.Update(msg)
+	}
 	// Return the updated model to the Bubble Tea runtime for processing.
-	// Note that we're not returning a command.
-	return m, nil
+	return m, cmd
 }
 
-func (m model) View() string {
+func (m model) View() tea.View {
 	welcome := "Welcome to Totion 🧠"
 
 	var style = lipgloss.NewStyle().
@@ -77,12 +59,23 @@ func (m model) View() string {
 	help := "Ctrl+N: New file   Ctrl+L: List   Esc: Back/Save   Ctrl+S: Save   Ctrl+Q: Quit"
 	welcome = style.Render(welcome)
 	view := ""
-	return fmt.Sprintf("\n%s\n\n%s\n\n%s", welcome, help, view)
+
+	if m.createFileInputVisible {
+		view = m.newFileInput.View()
+	}
+	return tea.NewView(fmt.Sprintf("\n%s\n\n%s\n\n%s", welcome, help, view))
 }
 
 func initializedModel() model {
+	// initialised new file input
+	ti := textinput.New()
+	ti.Placeholder = "What would you like to call it?"
+	ti.Focus()
+	ti.CharLimit = 156
+	ti.SetWidth(40)
 	return model{
-		msg: "Hii",
+		newFileInput:           ti,
+		createFileInputVisible: false,
 	}
 }
 
