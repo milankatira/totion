@@ -59,6 +59,24 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
 
+		case "esc":
+			if m.createFileInputVisible {
+				m.createFileInputVisible = false
+			}
+
+			if m.currentFile != nil {
+				m.currentFile = nil
+			}
+
+			if m.showListVisible {
+				if m.list.FilterState() == list.Filtering {
+					break
+				}
+				m.showListVisible = false
+			}
+
+			return m, nil
+
 		// These keys should exit the program.
 		case "ctrl+c", "q":
 			return m, tea.Quit
@@ -172,7 +190,7 @@ func (m model) View() tea.View {
 		PaddingRight(2).
 		PaddingLeft(2)
 
-	help := "Ctrl+N: New file   Ctrl+L: List   Esc: Back/Save   Ctrl+S: Save   Ctrl+Q: Quit"
+	help := "Ctrl+N: New file   Ctrl+L: List   Esc: Back   Ctrl+S: Save   Ctrl+Q: Quit"
 	welcome = style.Render(welcome)
 	view := ""
 
