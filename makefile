@@ -1,7 +1,7 @@
 .PHONY: dev build run clean
 
 dev:
-	go run main.go
+	go run .
 
 build:
 	@go build -o totion .
