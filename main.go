@@ -52,7 +52,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		h, v := docStyle.GetFrameSize()
-		m.list.SetSize(msg.Width-h, msg.Height-v)
+		m.list.SetSize(msg.Width-h, msg.Height-v-5)
 
 	// Is it a key press?
 	case tea.KeyMsg:
@@ -197,12 +197,15 @@ func initializedModel() model {
 
 	// list
 	noteList := listFiles()
+	finalList := list.New(noteList, list.NewDefaultDelegate(), 0, 0)
+	finalList.Title = "All Notes 📕"
+	finalList.Styles.Title = lipgloss.NewStyle().Foreground(lipgloss.Color("16")).Background(lipgloss.Color("205")).Padding(0, 1)
 
 	return model{
 		newFileInput:           ti,
 		createFileInputVisible: false,
 		noteTextArea:           ta,
-		list:                   list.New(noteList, list.NewDefaultDelegate(), 0, 0),
+		list:                   finalList,
 	}
 }
 
