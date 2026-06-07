@@ -56,10 +56,7 @@ func (m model) View() tea.View {
 		help,
 	)
 
-	view := tea.NewView(docStyle.Render(content))
-	view.BackgroundColor = snazzyBg
-	view.ForegroundColor = snazzyFg
-	return view
+	return tea.NewView(docStyle.Render(content))
 }
 
 // headerView renders the logo, tagline, and a right-aligned mode pill.
