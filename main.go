@@ -131,6 +131,7 @@ func initializedModel() model {
 
 	// initialised text area
 	ta := textarea.New()
+	ta.ShowLineNumbers = false
 	ta.Placeholder = "Write your note here..."
 	ta.Focus()
 
