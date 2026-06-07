@@ -50,8 +50,8 @@ curl -fsSL https://raw.githubusercontent.com/milankatira/totion/main/install.sh 
 **npm** (macOS / Linux / Windows):
 
 ```sh
-npx totion        # run without installing
-npm i -g totion   # or install globally
+npx @milankatira/totion        # run without installing
+npm i -g @milankatira/totion   # install globally — gives you the `totion` command
 ```
 
 **Go**:

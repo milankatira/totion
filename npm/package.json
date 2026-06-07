@@ -1,6 +1,9 @@
 {
-  "name": "totion",
+  "name": "@milankatira/totion",
   "version": "0.1.0",
+  "publishConfig": {
+    "access": "public"
+  },
   "description": "Your second brain, in the terminal — a fast, keyboard-driven notes TUI",
   "bin": {
     "totion": "totion.js"
