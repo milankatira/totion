@@ -2,17 +2,32 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
+	"charm.land/bubbles/v2/textarea"
 	"charm.land/bubbles/v2/textinput"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 )
 
+var (
+	vaultDir string
+)
+
+func init() {
+	homeDir, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatalf("Error in getting home dir: %v", err)
+	}
+	vaultDir = fmt.Sprintf("%s/.totion", homeDir)
+}
 
 type model struct {
 	newFileInput           textinput.Model
 	createFileInputVisible bool
+	currentFile            *os.File
+	noteTextArea           textarea.Model
 }
 
 func (m model) Init() tea.Cmd {
@@ -37,7 +52,28 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.createFileInputVisible = true
 			m.newFileInput.Focus()
 			return m, nil
+		case "enter":
+			// todo:create file
+			fileName := m.newFileInput.Value()
+			if fileName == "" {
+				filepath := fmt.Sprintf("%s/%s.md", vaultDir, fileName)
+
+				if _, err := os.Stat(filepath); err != nil {
+					return m, nil
+				}
+				f, err := os.Create(filepath)
+
+				if err != nil {
+					log.Fatalf("Error in creating file: %v", err)
+				}
+				m.currentFile = f
+				m.createFileInputVisible = false
+				m.newFileInput.SetValue("")
+
+			}
+			return m, nil
 		}
+
 	}
 
 	if m.createFileInputVisible {
@@ -68,6 +104,13 @@ func (m model) View() tea.View {
 }
 
 func initializedModel() model {
+
+	// initialised home dir
+	err := os.MkdirAll(vaultDir, 0755)
+	if err != nil {
+		log.Fatalf("Error in creating vault dir: %v", err)
+	}
+
 	// initialised new file input
 	ti := textinput.New()
 	ti.Placeholder = "What would you like to call it?"
@@ -75,15 +118,21 @@ func initializedModel() model {
 	ti.CharLimit = 156
 	ti.SetWidth(40)
 
+	// initialised text area
+	ta := textarea.New()
+	ta.Placeholder = "Write your note here..."
+	ta.Focus()
+
 	// Configure cursor style
-	s := ti.Styles()
+	s := ta.Styles()
 	s.Cursor.Color = lipgloss.Color("205")
 	s.Cursor.Blink = true
-	ti.SetStyles(s)
+	ta.SetStyles(s)
 
 	return model{
 		newFileInput:           ti,
 		createFileInputVisible: false,
+		noteTextArea:           ta,
 	}
 }
 
