@@ -1,0 +1,46 @@
+version: 2
+
+project_name: totion
+
+before:
+  hooks:
+    - go mod tidy
+
+builds:
+  - id: totion
+    main: .
+    binary: totion
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - darwin
+      - linux
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags:
+      - -s -w -X main.version={{.Version}}
+
+archives:
+  # Publish plain binaries so installers can use stable URLs like
+  # releases/latest/download/totion_darwin_arm64 without tar extraction.
+  - id: binaries
+    formats: [binary]
+    name_template: "totion_{{ .Os }}_{{ .Arch }}"
+
+checksum:
+  name_template: checksums.txt
+
+changelog:
+  sort: asc
+  filters:
+    exclude:
+      - "^docs"
+      - "^test"
+      - "^chore"
+
+release:
+  github:
+    owner: milankatira
+    name: totion

@@ -1,0 +1,42 @@
+{
+  "name": "totion",
+  "version": "0.1.0",
+  "description": "Your second brain, in the terminal — a fast, keyboard-driven notes TUI",
+  "bin": {
+    "totion": "totion.js"
+  },
+  "files": [
+    "totion.js",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ],
+  "keywords": [
+    "notes",
+    "tui",
+    "terminal",
+    "cli",
+    "markdown",
+    "bubbletea"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/milankatira/totion.git"
+  },
+  "homepage": "https://github.com/milankatira/totion#readme",
+  "bugs": {
+    "url": "https://github.com/milankatira/totion/issues"
+  },
+  "author": "Milan Katira",
+  "license": "MIT"
+}

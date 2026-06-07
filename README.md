@@ -41,20 +41,27 @@ The editor opens in a blue-framed panel titled with your note's name:
 
 ## Install
 
-Requires Go 1.24+.
+**Shell script** (macOS / Linux — no prerequisites):
 
 ```sh
-git clone https://github.com/milankatira/totion.git
-cd totion
-make build   # builds ./totion
-make run     # builds and launches
+curl -fsSL https://raw.githubusercontent.com/milankatira/totion/main/install.sh | sh
 ```
 
-Or run straight from source:
+**npm** (macOS / Linux / Windows):
 
 ```sh
-make dev
+npx totion        # run without installing
+npm i -g totion   # or install globally
 ```
+
+**Go**:
+
+```sh
+go install github.com/milankatira/totion@latest
+```
+
+Prebuilt binaries for every platform are also on the
+[releases page](https://github.com/milankatira/totion/releases/latest).
 
 ## Keybindings
 
@@ -96,11 +103,18 @@ All colors and component styles live in [`theme.go`](theme.go).
 
 ## Development
 
+Requires Go 1.26+.
+
 ```sh
+git clone https://github.com/milankatira/totion.git
+cd totion
 make dev       # run from source
 make build     # compile ./totion
 go test ./...  # run tests
 ```
+
+Releases are built by [GoReleaser](https://goreleaser.com) — pushing a `v*`
+tag publishes binaries for macOS, Linux, and Windows via GitHub Actions.
 
 ## Built with
 
