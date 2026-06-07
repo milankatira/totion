@@ -12,8 +12,16 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
+		m.width, m.height = msg.Width, msg.Height
+
 		h, v := docStyle.GetFrameSize()
 		m.list.SetSize(msg.Width-h, msg.Height-v-5)
+
+		// Editor sits inside a bordered panel with a title line: subtract the
+		// panel frame plus the header (title + blank line) and footer chrome.
+		ph, pv := panelStyle.GetFrameSize()
+		m.noteTextArea.SetWidth(max(20, msg.Width-h-ph))
+		m.noteTextArea.SetHeight(max(3, msg.Height-v-pv-9))
 
 	case tea.KeyMsg:
 		switch msg.String() {
