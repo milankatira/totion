@@ -48,6 +48,37 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case "ctrl+c", "q":
 			return m, tea.Quit
 
+		case "ctrl+s":
+			// text area value ->write in that file decsrptior and close it
+			content := m.noteTextArea.Value()
+			if m.currentFile == nil {
+				break
+			}
+
+			if err := m.currentFile.Truncate(0); err != nil {
+				log.Fatalf("can not save the file 😢")
+				return m, nil
+			}
+			if _, err := m.currentFile.Seek(0, 0); err != nil {
+				log.Fatalf("can not save the file 😢")
+				return m, nil
+			}
+
+			if _, err := m.currentFile.WriteString(content); err != nil {
+				log.Fatalf("can not save the file 😢")
+				return m, nil
+			}
+
+			if err := m.currentFile.Close(); err != nil {
+				log.Fatalf("can not save the file 😢")
+			}
+
+			m.currentFile = nil
+			m.noteTextArea.SetValue("")
+
+
+			return m, nil
+
 		case "ctrl+n":
 			m.createFileInputVisible = true
 			m.newFileInput.Focus()
