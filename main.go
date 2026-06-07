@@ -65,6 +65,7 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			}
 
 			if m.currentFile != nil {
+				m.noteTextArea.SetValue("")
 				m.currentFile = nil
 			}
 
@@ -157,6 +158,21 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 					m.noteTextArea.Focus()
 				}
 				m.showListVisible = false
+				return m, nil
+			}
+		// delete currenct selected file
+		case "ctrl+d":
+			if m.showListVisible {
+				item, ok := m.list.SelectedItem().(item)
+				if ok {
+					filepath := fmt.Sprintf("%s/%s", vaultDir, item.title)
+					if err := os.Remove(filepath); err != nil {
+						log.Fatalf("Error in deleting file: %v", err)
+					}
+				}
+				// update the list
+				noteList := listFiles()
+				m.list.SetItems(noteList)
 				return m, nil
 			}
 
