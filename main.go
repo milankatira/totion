@@ -53,32 +53,37 @@ func (m model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.newFileInput.Focus()
 			return m, nil
 		case "enter":
-			// todo:create file
-			fileName := m.newFileInput.Value()
-			if fileName == "" {
-				filepath := fmt.Sprintf("%s/%s.md", vaultDir, fileName)
+			if m.createFileInputVisible {
+				fileName := m.newFileInput.Value()
+				if fileName != "" {
+					filepath := fmt.Sprintf("%s/%s.md", vaultDir, fileName)
 
-				if _, err := os.Stat(filepath); err != nil {
-					return m, nil
+					f, err := os.OpenFile(filepath, os.O_RDWR|os.O_CREATE, 0644)
+					if err != nil {
+						log.Fatalf("Error in opening/creating file: %v", err)
+					}
+
+					m.currentFile = f
+					m.createFileInputVisible = false
+					m.newFileInput.SetValue("")
+					m.noteTextArea.Focus()
 				}
-				f, err := os.Create(filepath)
-
-				if err != nil {
-					log.Fatalf("Error in creating file: %v", err)
-				}
-				m.currentFile = f
-				m.createFileInputVisible = false
-				m.newFileInput.SetValue("")
-
+				return m, nil
 			}
-			return m, nil
 		}
 
 	}
 
 	if m.createFileInputVisible {
 		m.newFileInput, cmd = m.newFileInput.Update(msg)
+		return m, cmd
 	}
+
+	if m.currentFile != nil {
+		m.noteTextArea, cmd = m.noteTextArea.Update(msg)
+		return m, cmd
+	}
+
 	// Return the updated model to the Bubble Tea runtime for processing.
 	return m, cmd
 }
@@ -100,6 +105,12 @@ func (m model) View() tea.View {
 	if m.createFileInputVisible {
 		view = m.newFileInput.View()
 	}
+
+	// open a text area on enter
+	if m.currentFile != nil {
+		view = m.noteTextArea.View()
+	}
+
 	return tea.NewView(fmt.Sprintf("\n%s\n\n%s\n\n%s", welcome, help, view))
 }
 
